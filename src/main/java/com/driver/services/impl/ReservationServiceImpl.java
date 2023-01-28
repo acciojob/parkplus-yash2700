@@ -27,7 +27,7 @@ public class ReservationServiceImpl implements ReservationService {
 
 
             if (!userRepository3.findById(userId).isPresent() || !parkingLotRepository3.findById(parkingLotId).isPresent()) {
-                throw new Exception("Cannot make reservation");
+                throw new Exception("Reservation can not be made");
             }
             User user = userRepository3.findById(userId).get();
             Reservation reservation = new Reservation();
@@ -62,7 +62,7 @@ public class ReservationServiceImpl implements ReservationService {
                     }
                 }
             }
-            if (j == 0) throw new Exception("cannot make reservation");
+            if (j == 0) throw new Exception("Reservation can not be made");
             spot.setOccupied(true);
             reservation.setSpot(spot);
             reservation.setNumberOfHours(timeInHours);
