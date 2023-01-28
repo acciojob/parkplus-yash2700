@@ -87,4 +87,8 @@ public class Spot {
         this.parkingLot = parkingLot;
         this.reservationList = reservationList;
     }
+
+    public boolean isOccupied() {
+        return this.occupied;
+    }
 }

@@ -65,7 +65,7 @@ public class Reservation {
         this.user = user;
     }
 
-    public Reservation() {
+    public Reservation(Integer timeInHours, User user, Spot requiredSpot) {
     }
 
     public Reservation(int id, int numberOfHours, Payment payment, Spot spot, User user) {

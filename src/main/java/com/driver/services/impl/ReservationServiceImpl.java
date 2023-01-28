@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -24,59 +25,34 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation reserveSpot(Integer userId, Integer parkingLotId, Integer timeInHours, Integer numberOfWheels) throws Exception {
         try {
-
-
-            if (!userRepository3.findById(userId).isPresent() || !parkingLotRepository3.findById(parkingLotId).isPresent()) {
-                throw new Exception("Reservation can not be made");
-            }
             User user = userRepository3.findById(userId).get();
-            Reservation reservation = new Reservation();
             ParkingLot parkingLot = parkingLotRepository3.findById(parkingLotId).get();
-            int j = 0;
-            SpotType spotType;
-            if (numberOfWheels > 4) {
-                spotType = SpotType.OTHERS;
-            } else if (numberOfWheels > 2) {
-                spotType = SpotType.FOUR_WHEELER;
-            } else spotType = SpotType.TWO_WHEELER;
-            Spot spot = null;
-            int minimumPrice = Integer.MAX_VALUE;
-            for (Spot i : parkingLot.getSpotList()) {
-                if (spotType.equals(SpotType.OTHERS) && i.getSpotType().equals(SpotType.OTHERS)) {
-                    if (!i.getOccupied() && i.getPricePerHour() * timeInHours < minimumPrice) {
-                        minimumPrice = i.getPricePerHour() * timeInHours;
-                        j = 1;
-                        spot = i;
-                    }
-                } else if (spotType.equals(SpotType.FOUR_WHEELER) && i.getSpotType().equals(SpotType.OTHERS) || i.getSpotType().equals(SpotType.FOUR_WHEELER)) {
-                    if (!i.getOccupied() && i.getPricePerHour() * timeInHours < minimumPrice) {
-                        minimumPrice = i.getPricePerHour() * timeInHours;
-                        j = 1;
-                        spot = i;
-                    }
-                } else if (spotType.equals(SpotType.TWO_WHEELER)) {
-                    if (!i.getOccupied() && i.getPricePerHour() * timeInHours < minimumPrice) {
-                        minimumPrice = i.getPricePerHour() * timeInHours;
-                        j = 1;
-                        spot = i;
+            int minPrice = Integer.MAX_VALUE;
+            Spot requiredSpot = null;
+            for (Spot spot : parkingLot.getSpotList()) {
+                int NoOfWheelsPossible = Integer.MAX_VALUE;
+                if (spot.getSpotType() == SpotType.TWO_WHEELER)
+                    NoOfWheelsPossible = 2;
+                else if (spot.getSpotType() == SpotType.FOUR_WHEELER)
+                    NoOfWheelsPossible = 4;
+
+                if (numberOfWheels <= NoOfWheelsPossible && !spot.isOccupied()) {
+                    if ((spot.getPricePerHour() * timeInHours) < minPrice) {
+                        minPrice = (spot.getPricePerHour() * timeInHours);
+                        requiredSpot = spot;
                     }
                 }
             }
-            if (j == 0) throw new Exception("Reservation can not be made");
-            spot.setOccupied(true);
-            reservation.setSpot(spot);
-            reservation.setNumberOfHours(timeInHours);
-            reservation.setUser(user);
-            spot.getReservationList().add(reservation);
-            user.getReservationList().add(reservation);
-            userRepository3.save(user);
-            spotRepository3.save(spot);
+            if (Objects.isNull(requiredSpot)) {
+                throw new Exception("Reservation can not be made");
+            }
+            requiredSpot.setOccupied(true);
+            spotRepository3.save(requiredSpot);
+            Reservation reservation = new Reservation(timeInHours, user, requiredSpot);
+            reservationRepository3.save(reservation);
             return reservation;
-        }
-        catch (Exception e){
+        }catch (Exception e) {
             throw new Exception("Reservation can not be made");
-
         }
-
     }
 }
