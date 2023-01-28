@@ -44,6 +44,8 @@ public class Payment {
         this.paymentMode = paymentMode;
     }
 
+    public Boolean isPaymentCompleted(){return this.paymentCompleted;}
+
     public Reservation getReservation() {
         return reservation;
     }
