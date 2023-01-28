@@ -25,6 +25,9 @@ public class Reservation {
     @JsonIgnore
     private User user;
 
+    public Reservation() {
+    }
+
     public int getId() {
         return id;
     }
@@ -66,6 +69,9 @@ public class Reservation {
     }
 
     public Reservation(Integer timeInHours, User user, Spot requiredSpot) {
+        this.numberOfHours=timeInHours;
+        this.user=user;
+        this.spot=requiredSpot;
     }
 
     public Reservation(int id, int numberOfHours, Payment payment, Spot spot, User user) {
