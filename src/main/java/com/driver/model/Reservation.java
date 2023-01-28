@@ -74,11 +74,5 @@ public class Reservation {
         this.spot=requiredSpot;
     }
 
-    public Reservation(int id, int numberOfHours, Payment payment, Spot spot, User user) {
-        this.id = id;
-        this.numberOfHours = numberOfHours;
-        this.payment = payment;
-        this.spot = spot;
-        this.user = user;
-    }
+
 }
